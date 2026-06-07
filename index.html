@@ -1,160 +1,272 @@
-<<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Loja — Meus Produtos</title>
-  <style>
-    body{font-family:Inter,system-ui,Arial;max-width:1100px;margin:24px auto;padding:0 16px;color:#111}
-    header{display:flex;align-items:center;justify-content:space-between}
-    h1{font-size:1.6rem;margin:0}
-    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;margin-top:18px}
-    .card{border:1px solid #e6e6e6;padding:14px;border-radius:8px;background:#fff}
-    .card img{width:100%;height:160px;object-fit:cover;border-radius:6px}
-    .price{font-weight:700;margin-top:8px}
-    .btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
-    button,a.btn{padding:8px 10px;border-radius:6px;border:0;cursor:pointer;background:#1976d2;color:#fff;text-decoration:none;display:inline-block}
-    a.btn.secondary{background:#00a859}
-    button.ghost{background:#f2f2f2;color:#111}
-    .modal{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;visibility:hidden;opacity:0;transition:.15s}
-    .modal.open{visibility:visible;opacity:1}
-    .modal-content{background:#fff;padding:16px;border-radius:8px;max-width:420px;width:92%;text-align:center}
-    .small{font-size:.9rem;color:#555}
-    footer{margin-top:18px;color:#666;font-size:.9rem}
-  </style>
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lojão do Software</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        color: #e2e8f0;
+        background: #020617;
+        font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      }
+      * { box-sizing: border-box; }
+      body { margin: 0; min-height: 100vh; background: #020617; }
+      a { color: inherit; text-decoration: none; }
+      button { cursor: pointer; border: none; }
+      .container { width: min(1200px, calc(100% - 32px)); margin: 0 auto; }
+      .topbar { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; padding: 16px 0; border-bottom: 1px solid rgba(148,163,184,.12); font-size: 0.95rem; }
+      .topbar a { color: #38bdf8; }
+      .header { padding: 28px 0; }
+      .brand { display: flex; align-items: center; gap: 16px; }
+      .brand-mark { width: 52px; height: 52px; border-radius: 20px; background: #22d3ee; display: grid; place-items: center; font-size: 1.5rem; font-weight: 700; color: #020617; }
+      .brand-title p { margin: 0; font-size: 0.85rem; letter-spacing: 0.18em; text-transform: uppercase; color: #38bdf8; }
+      .brand-title h1 { margin: 4px 0 0; font-size: 1.4rem; font-weight: 800; color: #f8fafc; }
+      .search-actions { display: flex; flex-wrap: wrap; gap: 16px; margin-top: 24px; align-items: center; }
+      .search { flex: 1 1 320px; display: flex; gap: 8px; background: #0f172a; border: 1px solid #334155; border-radius: 18px; padding: 10px 14px; }
+      .search input { flex: 1; background: transparent; border: none; color: #f8fafc; padding: 10px 0; outline: none; font-size: 0.95rem; }
+      .search button { background: #0f172a; color: #38bdf8; font-weight: 700; padding: 10px 18px; border-radius: 14px; }
+      .actions { display: flex; flex-wrap: wrap; gap: 12px; }
+      .actions button { border-radius: 16px; padding: 12px 20px; font-weight: 700; transition: transform .2s ease; }
+      .actions button:hover { transform: translateY(-1px); }
+      .btn-primary { background: #22d3ee; color: #020617; }
+      .btn-secondary { background: rgba(255,255,255,.06); color: #f8fafc; border: 1px solid rgba(148,163,184,.16); }
+      .nav-categories { margin-top: 24px; display: flex; flex-wrap: wrap; gap: 14px; font-size: 0.95rem; color: #cbd5e1; border-top: 1px solid rgba(148,163,184,.12); padding-top: 18px; }
+      .nav-categories a { padding: 8px 14px; border-radius: 999px; background: rgba(51,65,85,.25); transition: background .2s ease; }
+      .nav-categories a:hover { background: rgba(34,211,238,.18); color: #38bdf8; }
+      .hero { display: grid; gap: 24px; grid-template-columns: 1.5fr 1fr; align-items: stretch; margin: 40px 0; }
+      .hero-pane { background: linear-gradient(135deg, rgba(15,23,42,.95), rgba(15,23,42,.82)); border: 1px solid rgba(148,163,184,.12); border-radius: 32px; padding: 40px; box-shadow: 0 30px 60px rgba(2,6,23,.25); }
+      .hero-tag { display: inline-flex; align-items: center; gap: 10px; padding: 12px 18px; border-radius: 999px; background: rgba(34,211,238,.1); color: #38bdf8; font-size: 0.85rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; }
+      .hero-pane h2 { margin: 24px 0 16px; font-size: clamp(2.6rem, 4vw, 4rem); line-height: 1.02; color: #f8fafc; }
+      .hero-pane p { margin: 0; max-width: 650px; color: #cbd5e1; line-height: 1.8; font-size: 1rem; }
+      .hero-btns { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 32px; }
+      .hero-card { background: #0f172a; border: 1px solid rgba(148,163,184,.12); border-radius: 32px; padding: 36px; display: grid; gap: 24px; }
+      .hero-card h3 { margin: 0; font-size: 1.65rem; color: #f8fafc; }
+      .hero-card p { margin: 0; color: #cbd5e1; line-height: 1.75; }
+      .hero-stat-grid { display: grid; gap: 16px; grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .stat-item { background: #020617; border: 1px solid rgba(148,163,184,.12); border-radius: 24px; padding: 18px; color: #cbd5e1; }
+      .stat-item span { display: block; font-size: 0.78rem; letter-spacing: .14em; text-transform: uppercase; color: #38bdf8; }
+      .stat-item strong { display: block; margin-top: 10px; font-size: 1.4rem; color: #f8fafc; }
+      .highlight-grid { display: grid; gap: 16px; grid-template-columns: repeat(2, minmax(0,1fr)); margin-bottom: 40px; }
+      .highlight-card { background: #0f172a; border: 1px solid rgba(148,163,184,.12); border-radius: 28px; padding: 24px; }
+      .highlight-card h3 { margin: 0 0 12px; color: #f8fafc; font-size: 1.05rem; }
+      .highlight-card p { margin: 0; color: #cbd5e1; line-height: 1.8; }
+      .section-title { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 24px; }
+      .section-title p { margin: 0; color: #38bdf8; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; font-size: 0.85rem; }
+      .section-title h2 { margin: 0; font-size: clamp(1.9rem, 2.5vw, 2.8rem); color: #f8fafc; line-height: 1.1; }
+      .section-title button { border-radius: 16px; background: rgba(255,255,255,.06); color: #f8fafc; padding: 12px 20px; font-weight: 700; border: 1px solid rgba(148,163,184,.12); }
+      .product-grid { display: grid; gap: 20px; grid-template-columns: repeat(4, minmax(0,1fr)); }
+      .product-card { background: #0f172a; border: 1px solid rgba(148,163,184,.12); border-radius: 28px; padding: 28px; display: flex; flex-direction: column; gap: 16px; }
+      .product-card span { color: #38bdf8; text-transform: uppercase; font-size: 0.78rem; letter-spacing: .16em; }
+      .product-card h3 { margin: 0; color: #f8fafc; font-size: 1.3rem; line-height: 1.2; }
+      .product-card p { margin: 0; color: #cbd5e1; line-height: 1.7; }
+      .product-price { font-size: 1.55rem; font-weight: 800; color: #22d3ee; }
+      .product-card button { margin-top: auto; width: fit-content; background: #22d3ee; color: #020617; padding: 12px 18px; border-radius: 18px; font-weight: 700; }
+      .categories-grid { display: grid; gap: 18px; grid-template-columns: repeat(3, minmax(0,1fr)); margin-bottom: 40px; }
+      .category-card { background: #0f172a; border: 1px solid rgba(148,163,184,.12); border-radius: 28px; padding: 24px; }
+      .category-card h3 { margin: 0 0 12px; color: #f8fafc; font-size: 1.2rem; }
+      .category-card p { margin: 0; color: #cbd5e1; line-height: 1.7; }
+      .footer { background: #020617; border-top: 1px solid rgba(148,163,184,.12); padding-top: 42px; padding-bottom: 32px; }
+      .footer-grid { display: grid; gap: 28px; grid-template-columns: repeat(4, minmax(0,1fr)); margin-bottom: 32px; }
+      .footer h3 { margin: 0 0 18px; color: #f8fafc; font-size: 1.05rem; }
+      .footer p, .footer li { margin: 0; color: #cbd5e1; line-height: 1.85; font-size: 0.95rem; }
+      .footer ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+      .footer-bottom { border-top: 1px solid rgba(148,163,184,.12); padding-top: 22px; color: #94a3b8; font-size: 0.9rem; text-align: center; }
+      .whatsapp-float { position: fixed; bottom: 24px; right: 24px; background: #22d3ee; color: #020617; border-radius: 999px; padding: 14px 18px; font-weight: 700; box-shadow: 0 15px 40px rgba(34,211,238,.22); z-index: 10; }
+      @media (max-width: 1080px) { .hero, .product-grid, .categories-grid, .footer-grid { grid-template-columns: 1fr; } .nav-categories { justify-content: center; } }
+      @media (max-width: 720px) { .container { width: calc(100% - 24px); } .search-actions { flex-direction: column; align-items: stretch; } .actions { justify-content: flex-start; } .hero-btns { width: 100%; } }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header class="header">
+        <div class="topbar">
+          <div>WhatsApp <a href="https://wa.me/5571984387624">(71) 98438-7624</a></div>
+          <div><a href="mailto:contato@lojaodosoftware.shop">contato@lojaodosoftware.shop</a></div>
+        </div>
+        <div class="brand">
+          <div class="brand-mark">L</div>
+          <div class="brand-title">
+            <p>Loja</p>
+            <h1>Lojão do Software</h1>
+          </div>
+        </div>
+        <div class="search-actions">
+          <div class="search">
+            <input type="search" placeholder="Buscar produtos" aria-label="Buscar produtos" />
+            <button>Buscar</button>
+          </div>
+          <div class="actions">
+            <button class="btn-secondary">Carrinho</button>
+            <button class="btn-primary">Entrar</button>
+          </div>
+        </div>
+        <nav class="nav-categories">
+          <a href="#">Autodesk</a>
+          <a href="#">Adobe</a>
+          <a href="#">Microsoft</a>
+          <a href="#">Promob</a>
+          <a href="#">Sketchup</a>
+          <a href="#">Solidworks</a>
+        </nav>
+      </header>
 
-<header>
-  <h1>Minha Loja — Produtos</h1>
-  <div class="small">Aceitamos: MercadoPago • Stripe • Pix</div>
-</header>
+      <main>
+        <section class="hero">
+          <div class="hero-pane">
+            <span class="hero-tag">Confira nossos produtos em destaque</span>
+            <h2>Softwares originais com entrega digital imediata</h2>
+            <p>Compre licenças digitais para Autodesk, Adobe, Microsoft e muito mais com atendimento via WhatsApp.</p>
+            <div class="hero-btns">
+              <button class="btn-primary">Ver produtos</button>
+              <button class="btn-secondary">Fale no WhatsApp</button>
+            </div>
+          </div>
+          <div class="hero-card">
+            <p>Vendas digitais</p>
+            <h3>Entrega imediata e nota fiscal</h3>
+            <p>Receba o software por e-mail assim que o pagamento for confirmado.</p>
+            <div class="hero-stat-grid">
+              <div class="stat-item">
+                <span>PIX</span>
+                <strong>10% off</strong>
+              </div>
+              <div class="stat-item">
+                <span>Boleto</span>
+                <strong>Desconto</strong>
+              </div>
+            </div>
+          </div>
+        </section>
 
-<!-- Produto exemplo 1 -->
-<section class="grid" id="products">
-  <article class="card" data-id="prod-001"
-           data-mercadopago-url="https://www.mercadopago.com/checkout/v1/redirect?preference_id=YOUR_MP_PREF"
-           data-stripe-url="https://checkout.stripe.com/pay/cs_test_XXXXXXXX"
-           data-pix-payload="00020126360014BR.GOV.BCB.PIX0136your-pix-code-or-copy-and-paste5204000053039865405100.005802BR5909Nome%20Loja6009Cidade6304ABCD"
-           data-download-url="https://seusite.com/downloads/produto-001.zip">
-    <img src="https://via.placeholder.com/600x400?text=Produto+1" alt="Produto 1" />
-    <h3>Produto Digital A</h3>
-    <div class="price">R$ 19,90</div>
-    <div class="small">Descrição curta do produto digital — e-book, áudio, etc.</div>
+        <section class="highlight-grid">
+          <div class="highlight-card">
+            <h3>Receba Agora</h3>
+            <p>Entrega digital instantânea para licenças e produtos.</p>
+          </div>
+          <div class="highlight-card">
+            <h3>Pague como Quiser</h3>
+            <p>Boleto, PIX ou cartão com desconto especial.</p>
+          </div>
+          <div class="highlight-card">
+            <h3>Compra Segura</h3>
+            <p>Transações protegidas e atendimento via WhatsApp.</p>
+          </div>
+          <div class="highlight-card">
+            <h3>5% de Desconto</h3>
+            <p>Desconto extra no pagamento por Boleto ou PIX.</p>
+          </div>
+        </section>
 
-    <div class="btns">
-      <a class="btn" href="#" data-action="mp">Pagar — MercadoPago</a>
-      <a class="btn secondary" href="#" data-action="stripe">Pagar — Stripe</a>
-      <button class="ghost" data-action="pix">Pagar — Pix</button>
-      <a class="btn" href="#" data-action="download">Download</a>
+        <section>
+          <div class="section-title">
+            <div>
+              <p>Escolha o seu próximo desafio</p>
+              <h2>Produtos campeões de venda</h2>
+            </div>
+            <button>Ver todos</button>
+          </div>
+          <div class="product-grid">
+            <article class="product-card">
+              <span>Licença original</span>
+              <h3>Autodesk AutoCAD 2024</h3>
+              <p class="product-price">R$ 260,91</p>
+              <button>Comprar</button>
+              <p style="color:#94a3b8;">10% no PIX</p>
+            </article>
+            <article class="product-card">
+              <span>Vitalício digital</span>
+              <h3>Autodesk Revit 2026</h3>
+              <p class="product-price">R$ 296,91</p>
+              <button>Comprar</button>
+              <p style="color:#94a3b8;">10% no PIX</p>
+            </article>
+            <article class="product-card">
+              <span>Creative Cloud</span>
+              <h3>Adobe Photoshop 2025</h3>
+              <p class="product-price">R$ 224,91</p>
+              <button>Comprar</button>
+              <p style="color:#94a3b8;">10% no PIX</p>
+            </article>
+            <article class="product-card">
+              <span>Licença vitalícia</span>
+              <h3>Lumion 2024</h3>
+              <p class="product-price">R$ 552,33</p>
+              <button>Comprar</button>
+              <p style="color:#94a3b8;">10% no PIX</p>
+            </article>
+          </div>
+        </section>
+
+        <section>
+          <div class="section-title">
+            <div>
+              <p>Categorias</p>
+              <h2>Filtre pelo seu software preferido</h2>
+            </div>
+          </div>
+          <div class="categories-grid">
+            <div class="category-card">
+              <h3>Autodesk</h3>
+              <p>Engenharia, arquitetura e design profissional</p>
+            </div>
+            <div class="category-card">
+              <h3>Adobe</h3>
+              <p>Criação, edição e produção multimídia</p>
+            </div>
+            <div class="category-card">
+              <h3>Microsoft</h3>
+              <p>Pacotes de escritório e produtividade</p>
+            </div>
+            <div class="category-card">
+              <h3>Promob</h3>
+              <p>Modelagem e projetos para móveis</p>
+            </div>
+            <div class="category-card">
+              <h3>Sketchup</h3>
+              <p>Modelagem 3D simples e rápida</p>
+            </div>
+            <div class="category-card">
+              <h3>Solidworks</h3>
+              <p>Projetos mecânicos e industriais</p>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer class="footer">
+        <div class="footer-grid">
+          <div>
+            <h3>Lojão do Software</h3>
+            <p>Loja de softwares e licenças digitais com entrega imediata e suporte via WhatsApp.</p>
+            <p>CNPJ: 42.049.137/0001-80</p>
+          </div>
+          <div>
+            <h3>Links úteis</h3>
+            <ul>
+              <li><a href="#">Sobre nós</a></li>
+              <li><a href="#">Política de privacidade</a></li>
+              <li><a href="#">Termos de uso</a></li>
+            </ul>
+          </div>
+          <div>
+            <h3>Contato</h3>
+            <ul>
+              <li><a href="mailto:contato@lojaodosoftware.shop">contato@lojaodosoftware.shop</a></li>
+              <li><a href="tel:+5571984387624">(11) 99999-9999</a></li>
+              <li>Suporte 24h</li>
+            </ul>
+          </div>
+          <div>
+            <h3>Conteúdo</h3>
+            <p>Blog, novidades e guias que ajudam você a aproveitar melhor cada produto.</p>
+          </div>
+        </div>
+        <div class="footer-bottom">© 2026 Lojão do Software | Todos os direitos reservados.</div>
+      </footer>
     </div>
-  </article>
 
-  <!-- Produto exemplo 2 -->
-  <article class="card" data-id="prod-002"
-           data-mercadopago-url="https://www.mercadopago.com/checkout/v1/redirect?preference_id=YOUR_MP_PREF_2"
-           data-stripe-url="https://checkout.stripe.com/pay/cs_test_YYYYYYYY"
-           data-pix-payload="00020126360014BR.GOV.BCB.PIX0136another-pix-code5204000053039865405200.005802BR5909Nome%20Loja6009Cidade6304EFGH"
-           data-download-url="https://seusite.com/downloads/produto-002.zip">
-    <img src="https://via.placeholder.com/600x400?text=Produto+2" alt="Produto 2" />
-    <h3>Produto Físico B</h3>
-    <div class="price">R$ 49,90</div>
-    <div class="small">Descrição curta do produto físico — envio disponível.</div>
-
-    <div class="btns">
-      <a class="btn" href="#" data-action="mp">Pagar — MercadoPago</a>
-      <a class="btn secondary" href="#" data-action="stripe">Pagar — Stripe</a>
-      <button class="ghost" data-action="pix">Pagar — Pix</button>
-      <a class="btn" href="#" data-action="download">Mais infos</a>
-    </div>
-  </article>
-</section>
-
-<!-- Modal Pix -->
-<div id="pixModal" class="modal" role="dialog" aria-hidden="true">
-  <div class="modal-content">
-    <h3>Pagamento via Pix</h3>
-    <div id="pixQrWrap" style="margin:12px 0;">
-      <img id="pixQr" src="" alt="QR Pix" style="max-width:200px;border-radius:6px" />
-    </div>
-    <div class="small">Ou copie a chave / payload abaixo:</div>
-    <pre id="pixPayload" style="white-space:pre-wrap;background:#fafafa;padding:8px;border-radius:6px"></pre>
-    <div style="margin-top:10px;display:flex;gap:8px;justify-content:center">
-      <button id="copyPix" class="btn">Copiar Pix</button>
-      <button id="closePix" class="ghost">Fechar</button>
-    </div>
-  </div>
-</div>
-
-<footer>Observação: troque os valores de `data-...` pelos links/strings reais do seu servidor.</footer>
-
-<script>
-  // Ações dos botões (funciona com links de checkout gerados no backend)
-  document.querySelectorAll('.card').forEach(card=>{
-    const mpUrl = card.dataset.mercadopagoUrl;
-    const stripeUrl = card.dataset.stripeUrl;
-    const pixPayload = card.dataset.pixPayload;
-    const downloadUrl = card.dataset.downloadUrl;
-
-    card.querySelectorAll('[data-action]').forEach(el=>{
-      el.addEventListener('click', (e)=>{
-        e.preventDefault();
-        const action = el.dataset.action;
-        if(action === 'mp'){
-          if(!mpUrl){ alert('Substitua data-mercadopago-url pelo link de checkout do MercadoPago.'); return; }
-          window.open(mpUrl, '_blank');
-        } else if(action === 'stripe'){
-          if(!stripeUrl){ alert('Substitua data-stripe-url pelo link de checkout do Stripe.'); return; }
-          window.open(stripeUrl, '_blank');
-        } else if(action === 'pix'){
-          openPixModal(pixPayload);
-        } else if(action === 'download'){
-          // Atenção: em produção proteja downloads (links assinados, verificação de pagamento)
-          if(!downloadUrl){ alert('Substitua data-download-url pelo link do arquivo.'); return; }
-          window.open(downloadUrl, '_blank');
-        }
-      });
-    });
-  });
-
-  // PIX modal
-  const pixModal = document.getElementById('pixModal');
-  const pixQr = document.getElementById('pixQr');
-  const pixPayloadEl = document.getElementById('pixPayload');
-  const copyBtn = document.getElementById('copyPix');
-  const closeBtn = document.getElementById('closePix');
-
-  function openPixModal(payload){
-    if(!payload){ alert('Substitua data-pix-payload com o payload PIX (copia/colagem ou payload brq).'); return; }
-    // Gera QR via Google Charts (rápido para demonstração)
-    const qrUrl = 'https://chart.googleapis.com/chart?cht=qr&chs=300x300&chl=' + encodeURIComponent(payload);
-    pixQr.src = qrUrl;
-    pixPayloadEl.textContent = payload;
-    pixModal.classList.add('open');
-    pixModal.setAttribute('aria-hidden','false');
-  }
-
-  copyBtn.addEventListener('click', async ()=>{
-    const text = pixPayloadEl.textContent;
-    try{
-      await navigator.clipboard.writeText(text);
-      copyBtn.textContent = 'Copiado!';
-      setTimeout(()=>copyBtn.textContent='Copiar Pix',1200);
-    }catch(e){
-      alert('Falha ao copiar. Selecione manualmente o texto.');
-    }
-  });
-
-  closeBtn.addEventListener('click', ()=>{
-    pixModal.classList.remove('open');
-    pixModal.setAttribute('aria-hidden','true');
-  });
-
-  // Fechar modal ao clicar fora
-  pixModal.addEventListener('click', (ev)=>{
-    if(ev.target === pixModal) { pixModal.classList.remove('open'); pixModal.setAttribute('aria-hidden','true'); }
-  });
-</script>
-
-</body>
+    <a class="whatsapp-float" href="https://wa.me/5571984387624">WhatsApp</a>
+  </body>
 </html>
